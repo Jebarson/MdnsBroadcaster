@@ -1,58 +1,85 @@
 # MdnsBroadcaster
-Mdns Broadcaster is a tiny python program that forwards mDNS traffic from one or more network interface to each other.
 
-This program was written to bring the ability of discovering devices from multiple network for Home Assistant. Home Assistant is capable to integrate devices only from a single network even if you expose multiple network to it. This is disadvantage for DIY home automation enthusiasists like me who would like to keep separate networks for IOTs often disconnected from Internet.
+**MdnsBroadcaster** is a lightweight Python program that forwards mDNS traffic between multiple network interfaces.
 
-My expertise lie in Microsoft technologies and Python is greek to me. I have written this with the assistance of Microsoft Copilot. If you are an expert in Python and happen to find any bug or insane piece of code, feel free to raise a PR.
+This tool was developed to enable device discovery across multiple networks for **Home Assistant**. By default, Home Assistant integrates devices only from a single network, even when multiple networks are exposed to it. This limitation can be frustrating for DIY home automation enthusiasts like myself, who often maintain separate networks for IoT devices—frequently isolated from the internet.
 
-## Running the program
-This program is required to be run only for discovering the devices and could be shutdown once the device is discovered and integrated. Apple HomeKit uses mDNS only for device discovery and then uses regular TCP/IP for continuous operation.
+My expertise lies in Microsoft technologies, and Python is greek to me (literally). This program was written with the help of **Microsoft Copilot**. If you're a Python expert and spot any bugs or insane code, feel free to contribute by raising a Pull Request (PR).
+
+---
+
+## Running the Program
+
+This program only needs to be run during the device discovery phase. Once a device has been discovered and integrated, the program can be shut down. Apple HomeKit uses mDNS exclusively for device discovery, while regular TCP/IP is used for ongoing operations.
+
+### Pre-Requisites
+
+1. Allow **UDP port 5353** on all your networks through the firewall. This can be disabled once the devices are discovered.
+2. For **Home Assistant**, ensure the **AppleKit Device** integration is installed.
+3. Install **Python**.
+4. Download the repository and extract its contents to a folder.
+5. Navigate to the folder in your terminal.
+6. Run the command:  
+   ```
+   pip install -r requirements.txt
+   ```
 
 ### Setup
-1. Identify all the IP addresses of the network interfaces that you are using including physical and virtual.
-1. Enter one IP address per line.
-1. Save and close the file.
-1. Allow UDP port 5353 on all the networks in your firewall. This can be disabled after the devices are discovered.
-1. Execute the executable in the host machine / the machine that has all the network adapters.
-1. If you are running this for HomeAssistant setup ensure Applekit Device is installed in your Home Assistant.
 
-### Understanding the console messages.
-The program execution has two steps.
+1. Identify all the IP addresses of your network interfaces (both physical and virtual).
+2. Enter one IP address per line in the `iplist.txt` file.
+3. Save and close the file.
+4. Run the program in the terminal:  
+   ```
+   python Main.py
+   ```
 
-1. Identifying the services that are broadcasting.
+---
 
-    Below is what it would look like.
+## Understanding the Console Messages
 
-    ```
-    Starting mDNS Detector...
-    Service added: _workstation._tcp.local.
-    Service added: _home-assistant._tcp.local.
-    Service added: _leap._tcp.local.
-    Service added: _lap._tcp.local.
-    Service added: _hap._tcp.local.
-    Service added: _lutron._tcp.local.
-    Service added: _hue._tcp.local.
-    Service added: _http._tcp.local.
-    Service added: _smb._tcp.local.
-    Service added: _device-info._tcp.local.
-    ```
-    Depending on the mDNS services that is running in all of your network, the service list will change. If you are using this to setup HomeAssistant as I am, you should see _home-assistant._tcp.local and _hap._tcp.local.
+The program's execution is divided into two steps:
 
-1. Setting up mDNS traffic forwarding.
+### 1. Identifying Broadcasting Services
 
-    A successful traffic forwarding will produce messages as below. Every one of the ip specified should show up in the log.
+The program starts by detecting broadcasting services. Here's an example of what you might see:
 
-    ```
-    Socket bound successfully to 20.0.0.2 on port 5353.
-    Socket bound successfully to 10.0.0.100 on port 5353.
-    Socket bound successfully to 172.17.0.1 on port 5353.
-    ```
-    
-    If any of the IP is wrong or unresolvable, you may get an error like below.
+```
+Starting mDNS Detector...
+Service added: _workstation._tcp.local.
+Service added: _home-assistant._tcp.local.
+Service added: _leap._tcp.local.
+Service added: _hap._tcp.local.
+Service added: _lutron._tcp.local.
+Service added: _hue._tcp.local.
+Service added: _http._tcp.local.
+Service added: _smb._tcp.local.
+Service added: _device-info._tcp.local.
+```
 
-    ```
-    Failed to create mDNS socket on 2: [Errno 11001] getaddrinfo failed
-    Failed to create mDNS socket on 0: [Errno 11001] getaddrinfo failed
-    ```
+The list of detected services will depend on the mDNS services running on your networks. For a **Home Assistant** setup, you should see services like `_home-assistant._tcp.local` and `_hap._tcp.local`.
 
-Once the devices are discovered, the program can be shut down by Ctl + C. Ignore the thread abort error messages that gets logged into the console.
+### 2. Setting Up mDNS Traffic Forwarding
+
+Once traffic forwarding is successfully set up, you should see messages like the following for each specified IP:
+
+```
+Socket bound successfully to 20.0.0.2 on port 5353.
+Socket bound successfully to 10.0.0.100 on port 5353.
+Socket bound successfully to 172.17.0.1 on port 5353.
+```
+
+If any IP addresses are incorrect or unresolved, you might encounter errors like this:
+
+```
+Failed to create mDNS socket on 2: [Errno 11001] getaddrinfo failed
+Failed to create mDNS socket on 0: [Errno 11001] getaddrinfo failed
+```
+
+---
+
+## Shutting Down
+
+Once all devices are discovered, you can safely terminate the program by pressing `Ctrl + C`. You may see thread abort errors in the console—these can be ignored.
+
+---
