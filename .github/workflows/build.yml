@@ -31,19 +31,19 @@ jobs:
     - name: Build executable
       run: |
         if [ "${{ matrix.os }}" == "windows-latest" ]; then \
-          pyinstaller --onefile --name MdnsBroadcaster --distpath dist/windows src/Main.py; \
+          pyinstaller --onefile --name MdnsBroadcaster --distpath dist/windows --add-data "iplist.txt;." src/Main.py \
+          if [ ! -f dist/windows/MdnsBroadcaster.exe ]; then \
+            echo "Build failed: dist/windows/MdnsBroadcaster.exe not found"; \
+            exit 1; \
+          fi; \
         else \
-          pyinstaller --onefile --name MdnsBroadcaster --distpath dist/linux src/Main.py; \
+          pyinstaller --onefile --name MdnsBroadcaster --distpath dist/linux --add-data "iplist.txt;." src/Main.py \
+          if [ ! -f dist/linux/MdnsBroadcaster ]; then \
+            echo "Build failed: dist/linux/MdnsBroadcaster not found"; \
+            exit 1; \
+          fi; \
         fi
       shell: bash
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ matrix.os }}-executable
-        path: |
-          dist/windows/MdnsBroadcaster.exe
-          dist/linux/MdnsBroadcaster
 
   release:
     needs: build
@@ -56,8 +56,8 @@ jobs:
       id: create_release
       uses: actions/create-release@v1
       with:
-        tag_name: v1.0.1
-        release_name: "Release v1.0.1"
+        tag_name: v1.0.2
+        release_name: "Release v1.0.2"
         body: |
           This release includes the following executables:
           - Windows executable
