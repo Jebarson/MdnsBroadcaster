@@ -35,13 +35,13 @@ jobs:
     - name: Build executable
       run: |
         if [ "${{ matrix.os }}" == "windows-latest" ]; then
-          pyinstaller --onefile --name MdnsBroadcaster --distpath dist/windows --add-data "iplist.txt;." src/Main.py
+          pyinstaller --onefile --name MdnsBroadcaster --distpath dist/windows --add-data "src/iplist.txt;." src/Main.py
           if [ ! -f dist/windows/MdnsBroadcaster.exe ]; then
             echo "Build failed: dist/windows/MdnsBroadcaster.exe not created"
             exit 1
           fi
         else
-          pyinstaller --onefile --name MdnsBroadcaster --distpath dist/linux --add-data "iplist.txt:." src/Main.py
+          pyinstaller --onefile --name MdnsBroadcaster --distpath dist/linux --add-data "src/iplist.txt:." src/Main.py
           if [ ! -f dist/linux/MdnsBroadcaster ]; then
             echo "Build failed: dist/linux/MdnsBroadcaster not created"
             exit 1
@@ -61,7 +61,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     env:
-      VERSION: v1.0.3 # Define the version here
+      VERSION: v1.0.4 # Define the version here
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
