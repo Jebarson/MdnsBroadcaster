@@ -31,9 +31,9 @@ jobs:
     - name: Build executable
       run: |
         if [ "${{ matrix.os }}" == "windows-latest" ]; then \
-          pyinstaller --onefile --name MdnsBroadcaster --distpath dist/windows Main.py; \
+          pyinstaller --onefile --name MdnsBroadcaster --distpath dist/windows src/Main.py; \
         else \
-          pyinstaller --onefile --name MdnsBroadcaster --distpath dist/linux Main.py; \
+          pyinstaller --onefile --name MdnsBroadcaster --distpath dist/linux src/Main.py; \
         fi
       shell: bash
 
