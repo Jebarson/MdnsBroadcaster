@@ -54,19 +54,25 @@ jobs:
         fi
       shell: bash
 
-    - name: Upload artifact
+    - name: Upload Windows artifact
+      if: matrix.os == 'windows-latest'
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.os }}-executable
-        path: |
-          dist/windows/MdnsBroadcaster.exe
-          dist/linux/MdnsBroadcaster
+        name: windows-executable
+        path: dist/windows/MdnsBroadcaster.exe
+
+    - name: Upload Linux artifact
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-executable
+        path: dist/linux/MdnsBroadcaster
 
   release:
     needs: build
     runs-on: ubuntu-latest
     env:
-      VERSION: v1.0.5 # Define the version here
+      VERSION: v1.0.6 # Define the version here
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
