@@ -77,8 +77,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Download artifacts
+    - name: Download Windows artifact
       uses: actions/download-artifact@v4
+      with:
+        name: windows-executable
+        path: ./dist/windows
+
+    - name: Download Linux artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: linux-executable
+        path: ./dist/linux
 
     - name: Create and Push Git Tag
       run: |
