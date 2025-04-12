@@ -24,7 +24,12 @@ jobs:
 
     - name: Clean previous builds
       run: |
-        rm -rf dist
+        if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          rmdir /s /q dist || exit 0
+        else
+          rm -rf dist
+        fi
+      shell: bash
 
     - name: Install dependencies
       run: |
@@ -61,7 +66,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     env:
-      VERSION: v1.0.4 # Define the version here
+      VERSION: v1.0.5 # Define the version here
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
