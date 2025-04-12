@@ -44,3 +44,41 @@ jobs:
         path: |
           dist/windows/MdnsBroadcaster.exe
           dist/linux/MdnsBroadcaster
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      with:
+        tag_name: v1.0.0
+        release_name: "Release v1.0.0"
+        body: |
+          This release includes the following executables:
+          - Windows executable
+          - Linux executable
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Windows Executable to Release
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist/windows/MdnsBroadcaster.exe
+        asset_name: MdnsBroadcaster.exe
+        asset_content_type: application/octet-stream
+
+    - name: Upload Linux Executable to Release
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist/linux/MdnsBroadcaster
+        asset_name: MdnsBroadcaster
+        asset_content_type: application/octet-stream
