@@ -65,8 +65,11 @@ jobs:
     - name: Create or update GitHub Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        RELEASE_TAG: v1.0.0
+        RELEASE_NOTES: |
+          This release includes the following executables:
+          - Windows executable
+          - Linux executable
       run: |
-        gh release view v1.0.0 >/dev/null 2>&1 || gh release create v1.0.0 --title "Release v1.0.0" --notes "This release includes the following executables:
-        - Windows executable
-        - Linux executable"
-        gh release upload v1.0.0 dist/windows/MdnsBroadcaster.exe dist/linux/MdnsBroadcaster --clobber
+        gh release view "$RELEASE_TAG" >/dev/null 2>&1 || gh release create "$RELEASE_TAG" --title "Release $RELEASE_TAG" --notes "$RELEASE_NOTES"
+        gh release upload "$RELEASE_TAG" dist/windows/MdnsBroadcaster.exe dist/linux/MdnsBroadcaster --clobber
