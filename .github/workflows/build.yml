@@ -55,12 +55,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Download build artifacts
+    - name: Download Windows artifact
       uses: actions/download-artifact@v4
       with:
-        pattern: "*-executable"
-        merge-multiple: true
-        path: .
+        name: windows-latest-executable
+        path: dist/windows
+
+    - name: Download Linux artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ubuntu-latest-executable
+        path: dist/linux
 
     - name: Create or update GitHub Release
       env:
