@@ -41,9 +41,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.os }}-executable
-        path: |
-          dist/windows/MdnsBroadcaster.exe
-          dist/linux/MdnsBroadcaster
+        path: ${{ matrix.os == 'windows-latest' && 'dist/windows/MdnsBroadcaster.exe' || 'dist/linux/MdnsBroadcaster' }}
 
   release:
     needs: build
