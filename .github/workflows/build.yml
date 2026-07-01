@@ -71,16 +71,19 @@ jobs:
           - Windows executable
           - Linux executable
       run: |
-        if gh release view "$RELEASE_TAG" >/dev/null 2>release_view_error.log; then
+        test -f dist/windows/MdnsBroadcaster.exe || { echo "Error: Windows executable not found at dist/windows/MdnsBroadcaster.exe"; exit 1; }
+        test -f dist/linux/MdnsBroadcaster || { echo "Error: Linux executable not found at dist/linux/MdnsBroadcaster"; exit 1; }
+
+        release_view_error_file=$(mktemp)
+        if gh release view "$RELEASE_TAG" >/dev/null 2>"$release_view_error_file"; then
           echo "Release $RELEASE_TAG already exists."
-        elif grep -q "release not found" release_view_error.log; then
+        elif grep -q "release not found" "$release_view_error_file"; then
           gh release create "$RELEASE_TAG" --title "Release $RELEASE_TAG" --notes "$RELEASE_NOTES"
         else
-          cat release_view_error.log
+          cat "$release_view_error_file"
+          rm -f "$release_view_error_file"
           exit 1
         fi
-
-        test -f dist/windows/MdnsBroadcaster.exe || { echo "Missing Windows executable at dist/windows/MdnsBroadcaster.exe"; exit 1; }
-        test -f dist/linux/MdnsBroadcaster || { echo "Missing Linux executable at dist/linux/MdnsBroadcaster"; exit 1; }
+        rm -f "$release_view_error_file"
 
         gh release upload "$RELEASE_TAG" dist/windows/MdnsBroadcaster.exe dist/linux/MdnsBroadcaster --clobber
