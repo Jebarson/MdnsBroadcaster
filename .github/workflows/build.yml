@@ -74,8 +74,8 @@ jobs:
         test -f dist/windows/MdnsBroadcaster.exe || { echo "Error: Windows executable not found at dist/windows/MdnsBroadcaster.exe"; exit 1; }
         test -f dist/linux/MdnsBroadcaster || { echo "Error: Linux executable not found at dist/linux/MdnsBroadcaster"; exit 1; }
 
-        if ! gh release create "$RELEASE_TAG" --title "Release $RELEASE_TAG" --notes "$RELEASE_NOTES" >/dev/null; then
+        if ! gh release create "$RELEASE_TAG" --title "Release $RELEASE_TAG" --notes "$RELEASE_NOTES"; then
           gh release edit "$RELEASE_TAG" --title "Release $RELEASE_TAG" --notes "$RELEASE_NOTES"
         fi
 
-        gh release upload "$RELEASE_TAG" dist/windows/MdnsBroadcaster.exe dist/linux/MdnsBroadcaster --clobber
+        gh release upload "$RELEASE_TAG" dist/windows/MdnsBroadcaster.exe dist/linux/MdnsBroadcaster --clobber || { echo "Error: Failed to upload release assets for $RELEASE_TAG"; exit 1; }
